@@ -1,23 +1,63 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState, useRef } from "react";
 
 function App() {
+  const [randomInput, setRandomInput] = useState("");
+  const [seconds, setSeconds] = useState(0);
+  const renders = useRef(0);
+  const inputRef = useRef();
+  const timerId = useRef();
+
+  const handleChange = (e) => {
+    setRandomInput(e.target.value);
+    renders.current++;
+  };
+
+  const focusOnInput = () => inputRef.current.focus();
+
+  const startTimer = () => {
+    timerId.current = setInterval(() => {
+      renders.current++;
+      setSeconds((prev) => prev + 1);
+    }, 1000);
+  };
+
+  const stopTimer = () => {
+    clearInterval(timerId.current);
+    timerId.current = 0;
+  };
+
+  const resetTimer = () => {
+    stopTimer();
+    if (seconds) {
+      renders.current++;
+      setSeconds(0);
+    }
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>useRef</h1>
+      <section>
+        <input
+          type="text"
+          placeholder="Random input"
+          ref={inputRef}
+          value={randomInput}
+          onChange={handleChange}
+        />
+        <p>Renders: {renders.current}</p>
+        <p>{randomInput}</p>
+        <button onClick={focusOnInput}>Focus on input</button>
+      </section>
+      <br />
+      <br />
+      <br />
+      <section>
+        <button onClick={startTimer}>Start timer</button>
+        <button onClick={stopTimer}>Stop timer</button>
+        <button onClick={resetTimer}>Reset timer</button>
+        <p>Timer: {seconds}</p>
+      </section>
     </div>
   );
 }
